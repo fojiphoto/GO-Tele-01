@@ -1,44 +1,101 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
+    <!--OTP version 1.2-->
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | Golf Orbit</title>
+    <title>Golf Orbit</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
   </head>
-  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=960 height=600 tabindex="-1" style="width: 960px; height: 600px; background: #000000"></canvas>
-    <script src="Build/cee3bfd5589651a8b16e2a12b8abe5b3.loader.js"></script>
+  <body>
+    <div id="unity-container" class="unity-desktop" style="width: 100%; height: 100%; overflow-x: hidden; overflow-y: hidden;">
+      <canvas id="unity-canvas" style="width: 100%; height: 100%; cursor: default;" ></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+    </div>
     <script>
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+      
+        //Lock Scaling/Zooming
+        document.getElementsByTagName("head")[0].innerHTML += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">';
+        document.getElementsByTagName("head")[0].innerHTML += '<meta name="HandheldFriendly" content="true" />';
+
+        document.addEventListener("gesturestart", function (e)
+        {
+          e.preventDefault();
+        });
+
+        document.addEventListener("gesturechange", function (e)
+        {
+          e.preventDefault();
+        });
+        document.addEventListener("gestureend", function (e)
+        {
+          e.preventDefault();
+        });
+
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/b23dd96997961653e2825455633aac82.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/8d3471d265870d8e4d94d37d1b27062f.data.unityweb",
+        frameworkUrl: buildUrl + "/054451b44dcf41f44a5640fcde94506c.framework.js.unityweb",
+        codeUrl: buildUrl + "/3a0cccd0337145bb06209af9caf931d3.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "PinpinTeam",
+        productName: "Golf Orbit",
+        productVersion: "1.0",
+      };
+      
+      //Mobile
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) 
+      {
         var meta = document.createElement('meta');
         meta.name = 'viewport';
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
         document.getElementsByTagName('head')[0].appendChild(meta);
 
-        var canvas = document.querySelector("#unity-canvas");
+        container.className = "unity-mobile";
+
         canvas.style.width = "100%";
         canvas.style.height = "100%";
-        canvas.style.position = "fixed";
 
-        document.body.style.textAlign = "left";
-
+        //Resize window when chage orentation
+        window.addEventListener("orientationchange", event =>
+        {
+          canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        });
+      } 
+      //PC
+      else 
+      {
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
       }
 
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/8fa714a630575630fc22415fcacf2a2f.data.unityweb",
-        frameworkUrl: "Build/5464f461b8a84d6a3b95c26d28bad422.framework.js.unityweb",
-        codeUrl: "Build/07bfd4e53c8d1c4a09706978fdb7ec65.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "PinpinTeam",
-        productName: "Golf Orbit",
-        productVersion: "1.0",
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      }).then((unityInstance) => {
-      }).catch((message) => {
-        alert(message);
-      });
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
     </script>
   </body>
 </html>
