@@ -1,34 +1,42 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+  <head>
     <!--OTP version 1.2-->
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Golf Orbit</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-</head>
-<body>
+  </head>
+  <body>
     <div id="unity-container" class="unity-desktop" style="width: 100%; height: 100%; overflow-x: hidden; overflow-y: hidden;">
-        <canvas id="unity-canvas" style="width: 100%; height: 100%; cursor: default;"></canvas>
-        <div id="unity-loading-bar">
-            <div id="unity-logo"></div>
-            <div id="unity-progress-bar-empty">
-                <div id="unity-progress-bar-full"></div>
-            </div>
+      <canvas id="unity-canvas" style="width: 100%; height: 100%; cursor: default;" ></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
+      </div>
     </div>
-
     <script>
-      // ---------------- Mobile viewport / prevent scaling ----------------
-      document.getElementsByTagName("head")[0].innerHTML += '<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">';
-      document.getElementsByTagName("head")[0].innerHTML += '<meta name="HandheldFriendly" content="true" />';
+      
+        //Lock Scaling/Zooming
+        document.getElementsByTagName("head")[0].innerHTML += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">';
+        document.getElementsByTagName("head")[0].innerHTML += '<meta name="HandheldFriendly" content="true" />';
 
-      // Prevent pinch/zoom gestures
-      document.addEventListener("gesturestart", e => e.preventDefault());
-      document.addEventListener("gesturechange", e => e.preventDefault());
-      document.addEventListener("gestureend", e => e.preventDefault());
-      document.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+        document.addEventListener("gesturestart", function (e)
+        {
+          e.preventDefault();
+        });
+
+        document.addEventListener("gesturechange", function (e)
+        {
+          e.preventDefault();
+        });
+        document.addEventListener("gestureend", function (e)
+        {
+          e.preventDefault();
+        });
 
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
@@ -36,51 +44,46 @@
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/a6c1fb6d09293290ab618a60dcee8741.loader.js";
+      var loaderUrl = buildUrl + "/b23dd96997961653e2825455633aac82.loader.js";
       var config = {
-        dataUrl: buildUrl + "/f3ced4f696493a05b0c6908699389891.data.unityweb",
-        frameworkUrl: buildUrl + "/c1b4e064f54e12deee23139d77c97db0.framework.js.unityweb",
-        codeUrl: buildUrl + "/65e7436fb6ecc8c80825019cf087f35c.wasm.unityweb",
+        dataUrl: buildUrl + "/b58428bcacbe5826f93d8ac78eebd2c8.data.unityweb",
+        frameworkUrl: buildUrl + "/d6e8a2163639c1d74e8df6fad0dc31d0.framework.js.unityweb",
+        codeUrl: buildUrl + "/dd6c1d7ce5183c8b7a0acb4308209547.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "PinpinTeam",
         productName: "Golf Orbit",
         productVersion: "1.0",
       };
-
-      // ------------------ Mobile specific fixes ------------------
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))
+      
+      //Mobile
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) 
       {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+
         container.className = "unity-mobile";
 
         canvas.style.width = "100%";
         canvas.style.height = "100%";
-        canvas.style.touchAction = "none";
-        canvas.style.userSelect = "none";
-        canvas.style.msTouchAction = "none";
-        canvas.style.webkitUserSelect = "none";
-        canvas.style.webkitTouchCallout = "none";
 
-        // Prevent touch conflicts inside iframe
-        canvas.addEventListener("pointerdown", e => e.preventDefault());
-        canvas.addEventListener("pointerup", e => e.preventDefault());
-        canvas.addEventListener("pointermove", e => e.preventDefault());
-
-        // Handle orientation change
-        window.addEventListener("orientationchange", () => {
+        //Resize window when chage orentation
+        window.addEventListener("orientationchange", event =>
+        {
           canvas.style.width = "100%";
-          canvas.style.height = "100%";
+        canvas.style.height = "100%";
         });
-      }
-      else
+      } 
+      //PC
+      else 
       {
         canvas.style.width = "100%";
         canvas.style.height = "100%";
       }
 
-
       loadingBar.style.display = "block";
 
-      // ------------------ Load Unity instance ------------------
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
@@ -94,5 +97,5 @@
       };
       document.body.appendChild(script);
     </script>
-</body>
+  </body>
 </html>
